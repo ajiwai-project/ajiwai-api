@@ -42,10 +42,16 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        $status = $exception->getCode();
+        $message = $exception->getMessage();
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message
+        ], $status);
     }
 }
