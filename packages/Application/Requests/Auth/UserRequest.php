@@ -5,9 +5,9 @@ namespace Ajiwai\Application\Requests\Auth;
 
 
 use Ajiwai\Domain\Model\Auth\User;
+use Ajiwai\Exceptions\RequestsValidateException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserRequest extends FormRequest
 {
@@ -39,14 +39,11 @@ class UserRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
-        $res = response()->json([
-            'status' => 400,
-            'errors' => $validator->errors(),
-        ], 400);
-        throw new HttpResponseException($res);
+        throw new RequestsValidateException();
     }
 
     /**
+     * 認証用ユーザークラスへ変換する
      * @return User
      */
     public function toEntity(): User

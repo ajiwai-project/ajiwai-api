@@ -4,9 +4,9 @@ namespace Ajiwai\Application\Controllers\Auth;
 
 use Ajiwai\Application\Requests\Auth\UserRequest;
 use Ajiwai\Domain\Model\Auth\UserRepositoryInterface;
+use Ajiwai\Exceptions\BaseException;
 use Ajiwai\Infrastracture\Repositories\Auth\UserRepositoryImpl;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -34,10 +34,7 @@ class UserController extends Controller
         $result = $this->userRepository
             ->create($userRequest->toEntity());
 
-        if (!$result) throw new HttpResponseException(response()->json([
-            'status' => 409,
-            'message' => 'conflict userId'
-        ], 409));
+        if (!$result) throw new BaseException('conflict userID', 409);
 
         return new JsonResponse([
             'status' => '201',

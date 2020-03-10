@@ -22,6 +22,8 @@ export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
 ## 実行手順
 ### gRPC PHP拡張をインストール
 
+https://github.com/grpc/grpc/tree/master/src/php
+
 `$ git clone -b RELEASE_TAG_HERE https://github.com/grpc/grpc`
 
 ```
