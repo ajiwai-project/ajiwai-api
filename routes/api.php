@@ -15,4 +15,4 @@ use Illuminate\Http\Request;
 
 Route::get('test', 'Ajiwai\Application\Controllers\HelloController@index');
 
-Route::post('register', 'Ajiwai\Application\Controllers\Auth\UserController@create');
+Route::post('users', 'Ajiwai\Application\Controllers\Auth\UserController@create');
