@@ -2,8 +2,13 @@
 
 namespace App\Exceptions;
 
+use Ajiwai\Exceptions\BaseException;
 use Exception;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -29,7 +34,7 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception  $exception
+     * @param Exception $exception
      * @return void
      */
     public function report(Exception $exception)
@@ -40,12 +45,29 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param Exception $exception
+     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        // Responsableインターフェースを継承したクラスはここでレスポンスを返す
+        if ($exception instanceof Responsable) {
+            return $exception->toResponse($request);
+        }
+
+        // HTTP系例外が発生した場合
+        if ($this->isHttpException($exception)) {
+            return $this->toResponse($request, $exception->getMessage(), $exception->getStatusCode());
+        }
+
+        // それ以外の場合は Internal Server Error とする
+        return $this->toResponse($request, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    protected function toResponse($request, string $message, int $statusCode)
+    {
+        return (new BaseException($message, $statusCode))
+            ->toResponse($request);
     }
 }

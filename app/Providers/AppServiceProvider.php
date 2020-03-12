@@ -13,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(
+            \Ajiwai\Domain\Model\Auth\UserRepositoryInterface::class,
+            \Ajiwai\Infrastracture\Repositories\Auth\UserRepository::class
+        );
     }
 
     /**

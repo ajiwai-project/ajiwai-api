@@ -20,6 +20,29 @@ export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
 `$ brew install composer`
 
 ## 実行手順
+### gRPC PHP拡張をインストール
+
+https://github.com/grpc/grpc/tree/master/src/php
+
+`$ git clone -b RELEASE_TAG_HERE https://github.com/grpc/grpc`
+
+```
+$ cd grpc
+$ git submodule update --init
+$ make
+$ [sudo] make install
+```
+
+```
+$ cd grpc/src/php/ext/grpc
+$ phpize
+$ ./configure
+$ make
+$ [sudo] make install
+```
+
+`$ echo "extension=grpc.so" >> /usr/local/etc/php/7.3/php.ini`
+
 ### 依存パッケージのインストール
 
 `$ composer install`
