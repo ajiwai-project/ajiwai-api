@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Ajiwai\Domain\Model\Auth;
+namespace Ajiwai\Library\Auth;
 
-class User
+class AuthUser
 {
     /** @var string */
     private $userId;
@@ -11,7 +11,7 @@ class User
     private $password;
 
     /**
-     * User constructor.
+     * AuthUser constructor.
      * @param string $userId
      * @param string $password
      */

@@ -3,22 +3,21 @@
 namespace Ajiwai\Application\Controllers\Auth;
 
 use Ajiwai\Application\Requests\Auth\UserRequest;
-use Ajiwai\Domain\Model\Auth\UserRepositoryInterface;
 use Ajiwai\Exceptions\BaseException;
-use Ajiwai\Infrastracture\Repositories\Auth\UserRepositoryImpl;
+use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
-    /** @var UserRepositoryInterface */
+    /** @var AuthUserRepositoryInterface */
     private $userRepository;
 
     /**
      * UserController constructor.
-     * @param UserRepositoryInterface $userRepository
+     * @param AuthUserRepositoryInterface $userRepository
      */
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(AuthUserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
     }

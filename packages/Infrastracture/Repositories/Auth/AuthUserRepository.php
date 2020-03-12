@@ -4,17 +4,17 @@
 namespace Ajiwai\Infrastracture\Repositories\Auth;
 
 
-use Ajiwai\Domain\Model\Auth\User;
-use Ajiwai\Domain\Model\Auth\UserRepositoryInterface;
+use Ajiwai\Library\Auth\AuthUser;
+use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
 use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
 
-class UserRepository implements UserRepositoryInterface
+class AuthUserRepository implements AuthUserRepositoryInterface
 {
     /** @var UserFBDao */
     private $userFBDao;
 
     /**
-     * UserRepositoryImpl constructor.
+     * AuthUserRepositoryImpl constructor.
      * @param $userFBDao
      */
     public function __construct(UserFBDao $userFBDao)
@@ -23,10 +23,10 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @param User $user
+     * @param AuthUser $user
      * @return bool
      */
-    public function create(User $user): bool
+    public function create(AuthUser $user): bool
     {
         $users = $this->userFBDao
             ->findByUserID($user->id());

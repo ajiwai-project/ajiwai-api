@@ -4,7 +4,7 @@
 namespace Ajiwai\Application\Requests\Auth;
 
 
-use Ajiwai\Domain\Model\Auth\User;
+use Ajiwai\Library\Auth\AuthUser;
 use Ajiwai\Exceptions\RequestsValidateException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -44,10 +44,10 @@ class UserRequest extends FormRequest
 
     /**
      * 認証用ユーザークラスへ変換する
-     * @return User
+     * @return AuthUser
      */
-    public function toEntity(): User
+    public function toEntity(): AuthUser
     {
-        return new User(self::input('userId'), self::input('password'));
+        return new AuthUser(self::input('userId'), self::input('password'));
     }
 }
