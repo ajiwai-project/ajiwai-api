@@ -30,7 +30,7 @@ class UserRequest extends FormRequest
     {
         return [
             'user_id' => 'required|string|max:20',
-            'password' => 'required|alpha_num|max:8|min:4'
+            'password' => 'required|regex:{^[a-zA-Z0-9-]+$}|max:8|min:4'
         ];
     }
 
