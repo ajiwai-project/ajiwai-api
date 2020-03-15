@@ -41,7 +41,7 @@ class UserController extends Controller
         return new JsonResponse([
             'status' => '201',
             'data' => [
-                'userId' => $userRequest->input('userId')
+                'userId' => $userRequest->get('user_id')
             ]
         ], 201);
     }

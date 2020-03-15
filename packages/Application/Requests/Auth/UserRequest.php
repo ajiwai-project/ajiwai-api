@@ -29,7 +29,7 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|string|max:20',
+            'user_id' => 'required|regex:{^[a-zA-Z0-9-]+$}|max:20',
             'password' => 'required|regex:{^[a-zA-Z0-9-]+$}|max:8|min:4'
         ];
     }
