@@ -15,4 +15,9 @@ use Illuminate\Http\Request;
 
 Route::get('test', 'Ajiwai\Application\Controllers\HelloController@index');
 
-Route::post('users', 'Ajiwai\Application\Controllers\Auth\UserController@create');
+Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::get('users/me', 'Ajiwai\Application\Controllers\UserController@self');
+});
+
+Route::post('users', 'Ajiwai\Application\Controllers\UserController@create');
+Route::post('login', 'Ajiwai\Application\Controllers\Auth\AuthController@login');

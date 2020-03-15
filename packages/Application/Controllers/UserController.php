@@ -1,12 +1,15 @@
 <?php
 
-namespace Ajiwai\Application\Controllers\Auth;
+namespace Ajiwai\Application\Controllers;
 
 use Ajiwai\Application\Requests\Auth\UserRequest;
 use Ajiwai\Exceptions\BaseException;
+use Ajiwai\Library\Auth\AuthUser;
 use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
@@ -33,7 +36,7 @@ class UserController extends Controller
         $result = $this->userRepository
             ->create($userRequest->toEntity());
 
-        if (!$result) throw new BaseException('conflict userID', 409);
+        if (!$result) throw new BaseException('Conflict UserID', 409);
 
         return new JsonResponse([
             'status' => '201',
@@ -41,5 +44,15 @@ class UserController extends Controller
                 'userId' => $userRequest->input('userId')
             ]
         ], 201);
+    }
+
+    public function self(AuthManager $authManager)
+    {
+        /** @var AuthUser $user */
+        $user = $authManager->guard('api')->user();
+
+        return new JsonResponse([
+            'user_id' => $user->getAuthIdentifier(),
+        ], Response::HTTP_OK);
     }
 }

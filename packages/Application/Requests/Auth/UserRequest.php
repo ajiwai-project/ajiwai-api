@@ -29,7 +29,7 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'userId' => 'required|string|max:20',
+            'user_id' => 'required|string|max:20',
             'password' => 'required|alpha_num|max:8|min:4'
         ];
     }
@@ -48,6 +48,15 @@ class UserRequest extends FormRequest
      */
     public function toEntity(): AuthUser
     {
-        return new AuthUser(self::input('userId'), self::input('password'));
+        return new AuthUser(self::get('user_id'), self::get('password'));
+    }
+
+    /**
+     * 連想型配列へ変換する
+     * @return array
+     */
+    public function toCredentials()
+    {
+        return array('user_id' => self::get('user_id'), 'password' => self::get('password'));
     }
 }

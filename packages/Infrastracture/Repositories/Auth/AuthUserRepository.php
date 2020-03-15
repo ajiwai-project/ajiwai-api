@@ -4,6 +4,7 @@
 namespace Ajiwai\Infrastracture\Repositories\Auth;
 
 
+use Ajiwai\Exceptions\BaseException;
 use Ajiwai\Library\Auth\AuthUser;
 use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
 use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
@@ -22,10 +23,6 @@ class AuthUserRepository implements AuthUserRepositoryInterface
         $this->userFBDao = $userFBDao;
     }
 
-    /**
-     * @param AuthUser $user
-     * @return bool
-     */
     public function create(AuthUser $user): bool
     {
         $users = $this->userFBDao
@@ -37,5 +34,14 @@ class AuthUserRepository implements AuthUserRepositoryInterface
             ->register($user->id(), $user->hashPassword());
 
         return true;
+    }
+
+    public function findById(string $userId): AuthUser
+    {
+        $snapshot = current($this->userFBDao->findByUserID($userId)->rows());
+
+        if ($snapshot == null) throw new BaseException('Not Found User', 404);
+
+        return new AuthUser($snapshot['user_id'], $snapshot['password']);
     }
 }

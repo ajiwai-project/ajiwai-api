@@ -2,8 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
+use Ajiwai\Infrastracture\Repositories\Auth\AuthUserRepository;
+use Ajiwai\Library\Auth\AjiwaiJWTGuard;
+use Ajiwai\Library\Auth\FirebaseUserProvider;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\JWTGuard;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +30,16 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Auth::provider('firebase', function () {
+            return new FirebaseUserProvider(new AuthUserRepository(new UserFBDao()));
+        });
+
+        AUth::extend('jwt', function ($app, $name, array $config) {
+            return new AjiwaiJWTGuard(
+                $app['tymon.jwt'],
+                $app['auth']->createUserProvider($config['provider']),
+                $app['request']
+            );
+        });
     }
 }
