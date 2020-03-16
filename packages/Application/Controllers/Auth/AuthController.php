@@ -35,7 +35,7 @@ class AuthController extends Controller
         $guard = $this->authManager->guard('api');
         $token = $guard->attempt($request->toCredentials(), true);
 
-        if (!$token) throw new BaseException('Not Found User', Response::HTTP_BAD_REQUEST);
+        if (!$token) throw new BaseException('Invalid password', Response::HTTP_UNAUTHORIZED);
 
         return new TokenResponse($token, $guard->createRefreshToken());
     }
