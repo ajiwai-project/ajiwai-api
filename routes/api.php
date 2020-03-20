@@ -21,3 +21,4 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
 Route::post('users', 'Ajiwai\Application\Controllers\UserController@create');
 Route::post('login', 'Ajiwai\Application\Controllers\Auth\AuthController@login');
+Route::post('refresh', 'Ajiwai\Application\Controllers\Auth\AuthController@refresh');

@@ -56,4 +56,29 @@ class UserFBDao
             ->documents();
     }
 
+    /**
+     * リフレッシュトークンを更新します
+     *
+     * @param string $DocumentId
+     * @param string $refreshId
+     */
+    public function updateRefreshId(string $DocumentId, string $refreshId)
+    {
+        $this->database
+            ->collection(self::TABLE_NAME)
+            ->document($DocumentId)
+            ->set(
+                ['refresh_id' => $refreshId],
+                ['merge' => true]
+            );
+    }
+
+    public function findByRefreshId(string $refreshId)
+    {
+        return $this->database
+            ->collection(self::TABLE_NAME)
+            ->where('refresh_id', '=', $refreshId)
+            ->documents();
+    }
+
 }

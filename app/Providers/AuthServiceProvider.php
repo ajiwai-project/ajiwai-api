@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use Ajiwai\Application\Requests\Auth\RefreshTokenRequest;
 use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
 use Ajiwai\Infrastracture\Repositories\Auth\AuthUserRepository;
 use Ajiwai\Library\Auth\AjiwaiJWTGuard;
+use Ajiwai\Library\Auth\AjiwaiRefreshTokenGuard;
 use Ajiwai\Library\Auth\FirebaseUserProvider;
+use Ajiwai\Library\Auth\RefreshToken;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\JWTGuard;
@@ -21,6 +24,20 @@ class AuthServiceProvider extends ServiceProvider
         // 'App\Model' => 'App\Policies\ModelPolicy',
     ];
 
+    public function register()
+    {
+        $this->app->bind(
+            AjiwaiRefreshTokenGuard::class,
+            function () {
+                return new AjiwaiRefreshTokenGuard(
+                    new RefreshToken($this->app->make('tymon.jwt')),
+                    new AuthUserRepository(new UserFBDao()),
+                    new RefreshTokenRequest()
+                );
+            }
+        );
+    }
+
     /**
      * Register any authentication / authorization services.
      *
@@ -30,7 +47,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Auth::provider('firebase', function () {
+        AUth::provider('firebase', function () {
             return new FirebaseUserProvider(new AuthUserRepository(new UserFBDao()));
         });
 

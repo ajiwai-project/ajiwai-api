@@ -6,6 +6,7 @@ namespace Ajiwai\Library\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\Log;
 
 class FirebaseUserProvider implements UserProvider
 {
@@ -59,5 +60,10 @@ class FirebaseUserProvider implements UserProvider
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
         return password_verify($credentials['password'], $user->getAuthPassword());
+    }
+
+    public function saveRefreshTokenID(string $refreshTokenID)
+    {
+        Log::info($refreshTokenID);
     }
 }

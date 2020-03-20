@@ -9,6 +9,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class Handler extends ExceptionHandler
 {
@@ -36,6 +37,7 @@ class Handler extends ExceptionHandler
      *
      * @param Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -59,6 +61,10 @@ class Handler extends ExceptionHandler
         // HTTP系例外が発生した場合
         if ($this->isHttpException($exception)) {
             return $this->toResponse($request, $exception->getMessage(), $exception->getStatusCode());
+        }
+
+        if ($exception instanceof TokenInvalidException) {
+            return $this->toResponse($request, 'token is invalid', 400);
         }
 
         // それ以外の場合は Internal Server Error とする

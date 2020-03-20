@@ -4,10 +4,11 @@
 namespace Ajiwai\Infrastracture\Repositories\Auth;
 
 
-use Ajiwai\Exceptions\BaseException;
+use Ajiwai\Exceptions\NotFoundUserException;
+use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
 use Ajiwai\Library\Auth\AuthUser;
 use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
-use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
+use Google\Cloud\Firestore\DocumentSnapshot;
 
 class AuthUserRepository implements AuthUserRepositoryInterface
 {
@@ -40,8 +41,31 @@ class AuthUserRepository implements AuthUserRepositoryInterface
     {
         $snapshot = current($this->userFBDao->findByUserID($userId)->rows());
 
-        if ($snapshot == null) throw new BaseException('Not Found User', 404);
+        if ($snapshot == null) throw new NotFoundUserException();
 
         return new AuthUser($snapshot['user_id'], $snapshot['password']);
+    }
+
+    public function updateRefreshId(AuthUser $user)
+    {
+        /** @var DocumentSnapshot $doc */
+        $snapshot = current(
+            $this->userFBDao
+                ->findByUserID($user->id())
+                ->rows());
+
+        if ($snapshot == null) throw new NotFoundUserException();
+
+        $this->userFBDao
+            ->updateRefreshId($snapshot->id(), $user->refreshId());
+    }
+
+    public function findByRefreshId(string $refreshId)
+    {
+        $snapshot = current($this->userFBDao->findByRefreshId($refreshId)->rows());
+
+        if ($snapshot == null) throw new NotFoundUserException();
+
+        return new AuthUser($snapshot['user_id']);
     }
 }

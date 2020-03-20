@@ -19,17 +19,10 @@ class AjiwaiJWTGuard extends JWTGuard
      * @param UserProvider $provider
      * @param Request $request
      *
-     * @return void
      */
     public function __construct(JWT $jwt, UserProvider $provider, Request $request)
     {
         parent::__construct($jwt, $provider, $request);
-    }
-
-    public function createRefreshToken()
-    {
-        //TODO リフレッシュトークンを利用する
-        return 'refresh token';
     }
 
     public function login(JWTSubject $user)

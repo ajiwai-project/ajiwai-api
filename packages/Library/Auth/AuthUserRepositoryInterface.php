@@ -17,4 +17,8 @@ interface AuthUserRepositoryInterface
      * @return AuthUser 認証用ユーザークラス
      */
     public function findById(string $userId): AuthUser;
+
+    public function updateRefreshId(AuthUser $user);
+
+    public function findByRefreshId(string $refreshId);
 }
