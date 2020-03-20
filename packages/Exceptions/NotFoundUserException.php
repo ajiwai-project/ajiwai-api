@@ -8,9 +8,9 @@ class NotFoundUserException extends BaseException
 {
     public function toResponse($request)
     {
-        $this->setErrorMessage('not found user');
+        $this->setErrorMessage('not found user, user id is incorrect');
         $this->setStatusCode(404);
-        $this->setErrorCode('NOT_FOUND_USER');
+        $this->setErrorCode('invalid_user_id');
         return parent::toResponse($request);
     }
 }

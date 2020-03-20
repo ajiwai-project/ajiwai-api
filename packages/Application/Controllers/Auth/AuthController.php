@@ -7,21 +7,14 @@ namespace Ajiwai\Application\Controllers\Auth;
 use Ajiwai\Application\Requests\Auth\RefreshTokenRequest;
 use Ajiwai\Application\Requests\Auth\UserRequest;
 use Ajiwai\Application\Responses\Auth\TokenResponse;
-use Ajiwai\Exceptions\BaseException;
+use Ajiwai\Exceptions\InvalidPasswordException;
 use Ajiwai\Library\Auth\AjiwaiJWTGuard;
 use Ajiwai\Library\Auth\AjiwaiRefreshTokenGuard;
 use Ajiwai\Library\Auth\AuthUser;
-use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
-use Ajiwai\Library\Auth\RefreshTokenFactory;
 use App\Http\Controllers\Controller;
-use http\Client\Request;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Tymon\JWTAuth\JWT;
 
 class AuthController extends Controller
 {
@@ -45,7 +38,7 @@ class AuthController extends Controller
         $guard = $this->authManager->guard('api');
         $accessToken = $guard->attempt($request->toCredentials(), true);
 
-        if (!$accessToken) throw new BaseException('Invalid password', Response::HTTP_UNAUTHORIZED);
+        if (!$accessToken) throw new InvalidPasswordException();
 
         $refreshToken = $refreshTokenGuard->createRefreshToken($request->get('user_id'));
 
