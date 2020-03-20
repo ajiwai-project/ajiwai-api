@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 
 class AuthController extends Controller
 {
@@ -31,7 +32,12 @@ class AuthController extends Controller
         $this->authManager = $authManager;
     }
 
-
+    /**
+     * ログイン
+     * @param UserRequest $request
+     * @param AjiwaiRefreshTokenGuard $refreshTokenGuard
+     * @return TokenResponse
+     */
     public function login(UserRequest $request, AjiwaiRefreshTokenGuard $refreshTokenGuard)
     {
         /** @var AjiwaiJWTGuard $guard */
@@ -46,22 +52,23 @@ class AuthController extends Controller
     }
 
     /**
-     * @param RefreshTokenRequest $request grant_typeとrefresh_tokenを必須とする
+     * アクセストークンをリフレッシュする
+     * @param RefreshTokenRequest $request
      * @param AjiwaiRefreshTokenGuard $refreshTokenGuard
      * @return JsonResponse
+     * @throws TokenBlacklistedException
      */
     public function refresh(RefreshTokenRequest $request, AjiwaiRefreshTokenGuard $refreshTokenGuard)
     {
-        /** @var AjiwaiJWTGuard $guard */
-        $guard = $this->authManager->guard('api');
 
         /** @var AuthUser $user */
         $user = $refreshTokenGuard->setRequest($request)
             ->validateRefreshToken();
 
-        $accessToken = $guard->setRequest($request)
-            ->refresh();
-        $refreshToken = $refreshTokenGuard->refresh($user->id());
+        /** @var AjiwaiJWTGuard $guard */
+        $guard = $this->authManager->guard('api');
+        $accessToken = $guard->refreshAccessToken($user, $request);
+        $refreshToken = $refreshTokenGuard->createRefreshToken($user->id());
 
         return new TokenResponse($accessToken, $refreshToken);
     }

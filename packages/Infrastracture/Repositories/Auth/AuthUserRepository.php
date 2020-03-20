@@ -4,7 +4,6 @@
 namespace Ajiwai\Infrastracture\Repositories\Auth;
 
 
-use Ajiwai\Exceptions\NotFoundRefreshIdException;
 use Ajiwai\Exceptions\NotFoundUserException;
 use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
 use Ajiwai\Library\Auth\AuthUser;
@@ -47,7 +46,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface
         return new AuthUser($snapshot['user_id'], $snapshot['password']);
     }
 
-    public function updateRefreshId(AuthUser $user)
+    public function updateRefreshId(AuthUser $user): void
     {
         /** @var DocumentSnapshot $doc */
         $snapshot = current(
@@ -59,14 +58,5 @@ class AuthUserRepository implements AuthUserRepositoryInterface
 
         $this->userFBDao
             ->updateRefreshId($snapshot->id(), $user->refreshId());
-    }
-
-    public function findByRefreshId(string $refreshId)
-    {
-        $snapshot = current($this->userFBDao->findByRefreshId($refreshId)->rows());
-
-        if ($snapshot == null) throw new NotFoundRefreshIdException();
-
-        return new AuthUser($snapshot['user_id']);
     }
 }
