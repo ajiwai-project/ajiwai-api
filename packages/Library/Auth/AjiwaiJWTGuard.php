@@ -25,7 +25,7 @@ class AjiwaiJWTGuard extends JWTGuard
         parent::__construct($jwt, $provider, $request);
     }
 
-    public function login(JWTSubject $user)
+    public function login(JWTSubject $user): string
     {
         $token = $this->setTTL(config('token.expire.accessToken'))
             ->jwt
@@ -35,5 +35,19 @@ class AjiwaiJWTGuard extends JWTGuard
             ->setUser($user);
 
         return $token;
+    }
+
+    /**
+     * アクセストークンをリフレッシュする
+     * @param AuthUser $user
+     * @param Request $request
+     * @return string アクセストークン
+     */
+    public function refreshAccessToken(AuthUser $user, Request $request): string
+    {
+        return $this->setRequest($request)
+            ->setUser($user)
+            ->setTTL(config('token.expire.accessToken'))
+            ->refresh();
     }
 }

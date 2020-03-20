@@ -11,7 +11,6 @@ use Ajiwai\Library\Auth\FirebaseUserProvider;
 use Ajiwai\Library\Auth\RefreshToken;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\JWTGuard;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -32,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
                 return new AjiwaiRefreshTokenGuard(
                     new RefreshToken($this->app->make('tymon.jwt')),
                     new AuthUserRepository(new UserFBDao()),
+                    new UserFBDao(),
                     new RefreshTokenRequest()
                 );
             }
@@ -51,7 +51,7 @@ class AuthServiceProvider extends ServiceProvider
             return new FirebaseUserProvider(new AuthUserRepository(new UserFBDao()));
         });
 
-        AUth::extend('jwt', function ($app, $name, array $config) {
+        AUth::extend('jwt', function ($app, array $config) {
             return new AjiwaiJWTGuard(
                 $app['tymon.jwt'],
                 $app['auth']->createUserProvider($config['provider']),

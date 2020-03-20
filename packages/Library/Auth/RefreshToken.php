@@ -2,15 +2,18 @@
 
 namespace Ajiwai\Library\Auth;
 
-use Ajiwai\Exceptions\BaseException;
-use Illuminate\Support\Facades\Log;
+use Ajiwai\Exceptions\InvalidRefreshTokenException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\JWT;
+use Tymon\JWTAuth\Token;
 
 class RefreshToken
 {
+    /** @var Token */
+    private $value;
     /** @var string */
     private $id;
-    /** @var JWT  */
+    /** @var JWT */
     private $jwt;
 
     /**
@@ -22,7 +25,10 @@ class RefreshToken
         $this->jwt = $jwt;
     }
 
-
+    /**
+     * リフレッシュトークンを初期化する
+     * @return string リフレッシュトークン
+     */
     public function initialize(): string
     {
         $this->initializeId();
@@ -35,9 +41,9 @@ class RefreshToken
         return $this->jwt->manager()->encode($payload)->get();
     }
 
-    private function initializeId()
+    private function initializeId(): void
     {
-        $this->id = uniqid(rand().'_');
+        $this->id = uniqid(rand() . '_');
     }
 
     public function id(): string
@@ -45,32 +51,27 @@ class RefreshToken
         return $this->id;
     }
 
-    public function validate(): bool
+    /**
+     * リフレッシュトークンをデコードする
+     * @return RefreshToken
+     * @throws TokenBlacklistedException
+     */
+    public function decode(): RefreshToken
     {
-        Log::info($this->jwt
-            ->getPayload()
-            ->get('jti'));
-
         $this->id = $this->jwt
-            ->getPayload()
+            ->manager()
+            ->decode($this->value, false)
             ->get('sub');
 
-        if ($this->id == null) throw new BaseException('bad request', 400);
-
-        return true;
-    }
-
-    public function setToken(string $token)
-    {
-        $this->jwt
-            ->setToken($token);
+        if ($this->id == null) throw new InvalidRefreshTokenException();
 
         return $this;
     }
 
-    public function invalidate()
+    public function setToken(string $token): RefreshToken
     {
-        $this->jwt->invalidate();
-        return new RefreshToken($this->jwt);
+        $this->value = $token instanceof Token ? $token : new Token($token);
+
+        return $this;
     }
 }
