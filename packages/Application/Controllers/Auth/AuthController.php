@@ -6,12 +6,11 @@ namespace Ajiwai\Application\Controllers\Auth;
 
 use Ajiwai\Application\Requests\Auth\UserRequest;
 use Ajiwai\Application\Responses\Auth\TokenResponse;
-use Ajiwai\Exceptions\BaseException;
+use Ajiwai\Exceptions\InvalidPasswordException;
 use Ajiwai\Library\Auth\AjiwaiJWTGuard;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
@@ -35,7 +34,7 @@ class AuthController extends Controller
         $guard = $this->authManager->guard('api');
         $token = $guard->attempt($request->toCredentials(), true);
 
-        if (!$token) throw new BaseException('Invalid password', Response::HTTP_UNAUTHORIZED);
+        if (!$token) throw new InvalidPasswordException();
 
         return new TokenResponse($token, $guard->createRefreshToken());
     }

@@ -4,10 +4,10 @@
 namespace Ajiwai\Infrastracture\Repositories\Auth;
 
 
-use Ajiwai\Exceptions\BaseException;
+use Ajiwai\Exceptions\NotFoundUserException;
+use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
 use Ajiwai\Library\Auth\AuthUser;
 use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
-use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
 
 class AuthUserRepository implements AuthUserRepositoryInterface
 {
@@ -40,7 +40,7 @@ class AuthUserRepository implements AuthUserRepositoryInterface
     {
         $snapshot = current($this->userFBDao->findByUserID($userId)->rows());
 
-        if ($snapshot == null) throw new BaseException('Not Found User', 404);
+        if ($snapshot == null) throw new NotFoundUserException();
 
         return new AuthUser($snapshot['user_id'], $snapshot['password']);
     }
