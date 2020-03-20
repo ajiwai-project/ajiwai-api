@@ -48,7 +48,7 @@ class RefreshToken
     public function validate(): bool
     {
         Log::info($this->jwt
-            ->getPgitgitayload()
+            ->getPayload()
             ->get('jti'));
 
         $this->id = $this->jwt

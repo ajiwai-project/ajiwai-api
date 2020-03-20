@@ -55,18 +55,12 @@ class AuthController extends Controller
         /** @var AjiwaiJWTGuard $guard */
         $guard = $this->authManager->guard('api');
 
-        //access_tokenからuser_idを取得する
-
-        //リフレッシュトークンの検証する
-        //invalidated => 400 bad request
         /** @var AuthUser $user */
         $user = $refreshTokenGuard->setRequest($request)
             ->validateRefreshToken();
 
-        //access_tokenの発行
         $accessToken = $guard->setRequest($request)
             ->refresh();
-        //refresh_tokenの発行
         $refreshToken = $refreshTokenGuard->refresh($user->id());
 
         return new TokenResponse($accessToken, $refreshToken);
