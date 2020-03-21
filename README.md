@@ -47,6 +47,10 @@ $ [sudo] make install
 
 `$ composer install`
 
+### 依存パッケージのアップデート
+
+`$ composer update`
+
 ### .envファイルの作成 
 
 ```
@@ -60,6 +64,6 @@ $ php artisan jwt:secret
 ```
 $ php artisan serve 
 
-$ curl http://localhost:8000/api/test
+$ curl http://localhost:8000/test
 >hello world
 ```
