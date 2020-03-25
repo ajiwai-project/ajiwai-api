@@ -29,8 +29,8 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|regex:{^[a-zA-Z0-9-]+$}|max:20',
-            'password' => 'required|regex:{^[a-zA-Z0-9-]+$}|max:8|min:4'
+            'user_id' => ['required','max:20', new UserIdRegex],
+            'password' => ['required','max:8','min:4', new PasswordRegex]
         ];
     }
 
