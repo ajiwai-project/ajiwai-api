@@ -51,7 +51,7 @@ class AuthServiceProvider extends ServiceProvider
             return new FirebaseUserProvider(new AuthUserRepository(new UserFBDao()));
         });
 
-        AUth::extend('jwt', function ($app, array $config) {
+        AUth::extend('jwt', function ($app, $name, array $config) {
             return new AjiwaiJWTGuard(
                 $app['tymon.jwt'],
                 $app['auth']->createUserProvider($config['provider']),
