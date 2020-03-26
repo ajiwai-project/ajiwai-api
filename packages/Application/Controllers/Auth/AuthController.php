@@ -4,13 +4,18 @@
 namespace Ajiwai\Application\Controllers\Auth;
 
 
+use Ajiwai\Application\Requests\Auth\RefreshTokenRequest;
 use Ajiwai\Application\Requests\Auth\UserRequest;
 use Ajiwai\Application\Responses\Auth\TokenResponse;
 use Ajiwai\Exceptions\InvalidPasswordException;
 use Ajiwai\Library\Auth\AjiwaiJWTGuard;
+use Ajiwai\Library\Auth\AjiwaiRefreshTokenGuard;
+use Ajiwai\Library\Auth\AuthUser;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\JsonResponse;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 
 class AuthController extends Controller
 {
@@ -27,15 +32,44 @@ class AuthController extends Controller
         $this->authManager = $authManager;
     }
 
-
-    public function login(UserRequest $request)
+    /**
+     * ログイン
+     * @param UserRequest $request
+     * @param AjiwaiRefreshTokenGuard $refreshTokenGuard
+     * @return TokenResponse
+     */
+    public function login(UserRequest $request, AjiwaiRefreshTokenGuard $refreshTokenGuard)
     {
         /** @var AjiwaiJWTGuard $guard */
         $guard = $this->authManager->guard('api');
-        $token = $guard->attempt($request->toCredentials(), true);
+        $accessToken = $guard->attempt($request->toCredentials(), true);
 
-        if (!$token) throw new InvalidPasswordException();
+        if (!$accessToken) throw new InvalidPasswordException();
 
-        return new TokenResponse($token, $guard->createRefreshToken());
+        $refreshToken = $refreshTokenGuard->createRefreshToken($request->get('user_id'));
+
+        return new TokenResponse($accessToken, $refreshToken);
+    }
+
+    /**
+     * アクセストークンをリフレッシュする
+     * @param RefreshTokenRequest $request
+     * @param AjiwaiRefreshTokenGuard $refreshTokenGuard
+     * @return JsonResponse
+     * @throws TokenBlacklistedException
+     */
+    public function refresh(RefreshTokenRequest $request, AjiwaiRefreshTokenGuard $refreshTokenGuard)
+    {
+
+        /** @var AuthUser $user */
+        $user = $refreshTokenGuard->setRequest($request)
+            ->validateRefreshToken();
+
+        /** @var AjiwaiJWTGuard $guard */
+        $guard = $this->authManager->guard('api');
+        $accessToken = $guard->refreshAccessToken($user, $request);
+        $refreshToken = $refreshTokenGuard->createRefreshToken($user->id());
+
+        return new TokenResponse($accessToken, $refreshToken);
     }
 }

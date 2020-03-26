@@ -12,16 +12,20 @@ class AuthUser implements JWTSubject, Authenticatable
     private $userId;
     /** @var string */
     private $password;
+    /** @var string */
+    private $refreshId;
 
     /**
      * AuthUser constructor.
      * @param string $userId
      * @param string $password
+     * @param string $refreshId
      */
-    public function __construct(string $userId, string $password)
+    public function __construct(string $userId, string $password=null, string $refreshId=null)
     {
         $this->userId = $userId;
         $this->password = $password;
+        $this->refreshId = $refreshId;
     }
 
     public function id(): string
@@ -36,6 +40,11 @@ class AuthUser implements JWTSubject, Authenticatable
     public function hashPassword(): string
     {
         return password_hash($this->password, PASSWORD_BCRYPT);
+    }
+
+    public function refreshId()
+    {
+        return $this->refreshId;
     }
 
     public function getAuthIdentifierName()
