@@ -1,5 +1,7 @@
 <?php
 
+use Ajiwai\Library\Auth\AuthUser;
+
 return [
 
     /*
@@ -37,7 +39,7 @@ return [
 
     'guards' => [
         'api' => [
-            'driver' => 'token',
+            'driver' => 'jwt',
             'provider' => 'users',
             'hash' => false,
         ],
@@ -62,8 +64,8 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
-            'model' => User::class,
+            'driver' => 'firebase',
+            'model' => AuthUser::class,
         ],
 
         // 'users' => [

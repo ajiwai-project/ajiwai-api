@@ -10,11 +10,12 @@
     "require": {
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
-        "kreait/firebase-php": "^4.40",
-        "grpc/grpc": "1.27.*",
         "google/cloud-firestore": "1.11.*",
+        "grpc/grpc": "1.27.*",
+        "kreait/firebase-php": "^4.40",
         "laravel/framework": "^6.0",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "tymon/jwt-auth": "1.0.0-rc.5"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

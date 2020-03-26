@@ -9,6 +9,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Handler extends ExceptionHandler
 {
@@ -36,6 +37,7 @@ class Handler extends ExceptionHandler
      *
      * @param Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -45,7 +47,7 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @param Exception $exception
      * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -59,6 +61,12 @@ class Handler extends ExceptionHandler
         // HTTP系例外が発生した場合
         if ($this->isHttpException($exception)) {
             return $this->toResponse($request, $exception->getMessage(), $exception->getStatusCode());
+        }
+
+        //TODO リフレッシュトークンの期限切れ時エラーをキャッチできない
+        //TODO トークンレフレッシュ時、すでにアクセストークンがブラックリストに登録されている場合エラーをキャッチできない
+        if ($exception instanceof JWTException) {
+            return $this->toResponse($request, $exception->getMessage(), 401);
         }
 
         // それ以外の場合は Internal Server Error とする

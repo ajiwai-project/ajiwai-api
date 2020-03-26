@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Ajiwai\Infrastracture\Dao\Firebase\UserFBDao;
+use Ajiwai\Infrastracture\Repositories\Auth\AuthUserRepository;
+use Ajiwai\Library\Auth\AuthUserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,10 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            \Ajiwai\Domain\Model\Auth\UserRepositoryInterface::class,
-            \Ajiwai\Infrastracture\Repositories\Auth\UserRepository::class
-        );
+        $this->app->bind(AuthUserRepositoryInterface::class, function () {
+            return new AuthUserRepository(new UserFBDao());
+        });
     }
 
     /**
