@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,7 @@ Route::get('test', 'Ajiwai\Application\Controllers\HelloController@index');
 
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('users/me', 'Ajiwai\Application\Controllers\UserController@self');
+    Route::post('users/{userId}/ajiwais', 'Ajiwai\Application\Controllers\AjiwaiController@create');
 });
 
 Route::post('users', 'Ajiwai\Application\Controllers\UserController@create');
