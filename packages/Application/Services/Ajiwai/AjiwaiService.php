@@ -1,24 +1,29 @@
 <?php
 
 use Ajiwai\Domain\Ajiwai\Ajiwai;
-use Ajiwai\Exceptions\NotFoundUserException;
-use Ajiwai\Infrastracture\Repositories\Auth\AuthUserRepository;
+use Ajiwai\Domain\Ajiwai\User;
+use Ajiwai\Domain\User\UserRepositoryInterface;
 
 class AjiwaiService
 {
-    /** @var AuthUserRepository */
-    private $authUserRepository;
+    /** @var UserRepository */
+    private $userRepository;
 
-    public function __construct(AuthUserRepository $authUserRepository)
+    public function __construct(UserRepositoryInterface $UserRepository)
     {
-        $this->authUserRepository = $authUserRepository;
+        $this->userRepository = $UserRepository;
     }
 
     public function save_ajiwai(string $userId, Ajiwai $ajiwai)
     {
-        $user = $this->authUserRepository->findById($userId);
+        /** @var User */
+        $user = $this->userRepository->findById($userId);
 
-        if($user == null) throw new NotFoundUserException();
+        $user->createAjiwai($ajiwai);
+
+        //TODO update user data
+
+        //TODO call engine service
 
         // TODO
         return "";

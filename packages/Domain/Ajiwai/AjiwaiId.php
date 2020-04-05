@@ -5,15 +5,14 @@ namespace Ajiwai\Domain\Ajiwai;
 
 use function Ajiwai\Library\assert;
 
-class BrandName
+class AjiwaiId
 {
-
-
+    /** @var int */
     private $value;
 
-    public function __construct(string $value)
+    public function __construct(int $value)
     {
-        assert(strlen($value) < 40, 'brand name is less than 40 charactors');
+        assert($value > 0, 'ajiwai id is not minus');
         $this->value = $value;
     }
 }
